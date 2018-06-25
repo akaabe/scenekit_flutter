@@ -25,7 +25,7 @@
                   onNewFrame:(void(^)(void))onNewFrame {
     self = [super init];
     if (self){
-        self.renderSize = renderSize;
+        self.renderSize = CGSizeMake(renderSize.width * 1.3, renderSize.height * 1.3);
         self.running = YES;
         self.onNewFrame = onNewFrame;
         
@@ -76,7 +76,7 @@
 
 
 - (void)initGL {
-    SCNScene *scene = [SCNScene sceneNamed:@"ship.scn"];
+    SCNScene *scene = [SCNScene sceneNamed:@"model.scn"];
     
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:_context];
@@ -85,6 +85,7 @@
     
     _renderer = [SCNRenderer rendererWithContext:_context options:nil];
     _renderer.scene = scene;
+//    [_renderer setJitteringEnabled:YES];
     
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
@@ -98,10 +99,8 @@
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _renderSize.width, _renderSize.height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer);
     
-    CGSize size = CGSizeMake(600, 400);
-    
     //hack to make render to work
-    [_renderer snapshotAtTime:0 withSize:size antialiasingMode:SCNAntialiasingModeMultisampling4X];
+    [_renderer snapshotAtTime:0 withSize:CGSizeMake(0, 0) antialiasingMode:SCNAntialiasingModeNone];
 
 }
 
