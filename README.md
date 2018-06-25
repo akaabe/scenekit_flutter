@@ -6,4 +6,3 @@ https://medium.com/@germansaprykin/opengl-with-texture-widget-f919743d25d9
 
 Issues:
 - Hack to init SCNSceneRenderer
-- Back face culling
