@@ -41,7 +41,7 @@
     
     while (_running) {
         CFTimeInterval loopStart = CACurrentMediaTime();
-        CFTimeInterval waitDelta = 0.016 - (CACurrentMediaTime() - loopStart);
+        CFTimeInterval waitDelta = 0.033 - (CACurrentMediaTime() - loopStart);
         
         glViewport(0, 0, _renderSize.width, _renderSize.height);
         glClearColor(1, 1, 1, 1);
@@ -76,7 +76,7 @@
 
 
 - (void)initGL {
-    SCNScene *scene = [SCNScene sceneNamed:@"model.scn"];
+    SCNScene *scene = [SCNScene sceneNamed:@"ship.scn"];
     
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:_context];
