@@ -1,10 +1,3 @@
-//
-//  OpenGLRender.m
-//  opengl_texture
-//
-//  Created by German Saprykin on 22/4/18.
-//
-
 #import "SceneKitRender.h"
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES2/gl.h>
@@ -93,17 +86,21 @@
     _renderer = [SCNRenderer rendererWithContext:_context options:nil];
     _renderer.scene = scene;
     
-    glGenRenderbuffers(1, &_depthBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, _renderSize.width, _renderSize.height);
-
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    
     glGenFramebuffers(1, &_frameBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, CVOpenGLESTextureGetName(_texture), 0);
     
+    glGenRenderbuffers(1, &_depthBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _renderSize.width, _renderSize.height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer);
+    
     CGSize size = CGSizeMake(600, 400);
     
-    //hack to make render work
+    //hack to make render to work
     [_renderer snapshotAtTime:0 withSize:size antialiasingMode:SCNAntialiasingModeMultisampling4X];
 
 }
