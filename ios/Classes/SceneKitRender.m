@@ -2,7 +2,6 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
-#import <SceneKit/SceneKit.h>
 
 @interface SceneKitRender()
 @property (strong, nonatomic) EAGLContext *context;
@@ -15,6 +14,8 @@
 @property (nonatomic) CVOpenGLESTextureCacheRef textureCache;
 @property (nonatomic) CVOpenGLESTextureRef texture;
 @property (nonatomic) CGSize renderSize;
+@property (nonatomic) SCNNode *freezer;
+@property (nonatomic) SCNNode *camera;
 @property (nonatomic) BOOL running;
 @property (strong, nonatomic) SCNRenderer *renderer;
 @end
@@ -25,7 +26,7 @@
                   onNewFrame:(void(^)(void))onNewFrame {
     self = [super init];
     if (self){
-        self.renderSize = CGSizeMake(renderSize.width * 1.3, renderSize.height * 1.3);
+        self.renderSize = CGSizeMake(renderSize.width * 1.5, renderSize.height * 1.5);
         self.running = YES;
         self.onNewFrame = onNewFrame;
         
@@ -41,7 +42,7 @@
     
     while (_running) {
         CFTimeInterval loopStart = CACurrentMediaTime();
-        CFTimeInterval waitDelta = 0.033 - (CACurrentMediaTime() - loopStart);
+        CFTimeInterval waitDelta = 0.016 - (CACurrentMediaTime() - loopStart);
         
         glViewport(0, 0, _renderSize.width, _renderSize.height);
         glClearColor(1, 1, 1, 1);
@@ -76,7 +77,7 @@
 
 
 - (void)initGL {
-    SCNScene *scene = [SCNScene sceneNamed:@"ship.scn"];
+    SCNScene *scene = [SCNScene sceneNamed:@"model.scn"];
     
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:_context];
@@ -85,6 +86,13 @@
     
     _renderer = [SCNRenderer rendererWithContext:_context options:nil];
     _renderer.scene = scene;
+    
+    _camera = [scene.rootNode childNodeWithName:@"camera" recursively:YES];
+    _renderer.pointOfView = _camera;
+    _camera.eulerAngles = SCNVector3Make(0, 0, M_PI);
+    
+    _freezer = [scene.rootNode childNodeWithName:@"freezer" recursively:YES];
+    
 //    [_renderer setJitteringEnabled:YES];
     
     glEnable(GL_DEPTH_TEST);
@@ -152,6 +160,24 @@
     CFRelease(_target);
     CFRelease(_textureCache);
     CFRelease(_texture);
+}
+
+- (void)zoomTo:(SCNVector3)pos;
+{
+    if (_camera != nil) {
+        [SCNTransaction begin];
+        [SCNTransaction setAnimationDuration:1.0];
+        _camera.position = pos;
+        [SCNTransaction commit];
+    }
+}
+
+- (void)zoomOut
+{
+    [SCNTransaction begin];
+    [SCNTransaction setAnimationDuration:3.0];
+    _camera.position = SCNVector3Make(207, 58, 330);
+    [SCNTransaction commit];
 }
 
 @end
