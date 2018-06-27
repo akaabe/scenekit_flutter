@@ -45,6 +45,15 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  void zoomToItem() {
+    _controller.zoomToItem(cur);
+    if (cur >= 4) {
+      cur = 0;
+    } else {
+      cur += 1;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -61,7 +70,7 @@ class _MyAppState extends State<MyApp> {
                   ? new Texture(textureId: _controller.textureId)
                   : null,
             ),
-            onTap: zoomToPos,
+            onTap: zoomToItem,
           ),
         ),
       ),

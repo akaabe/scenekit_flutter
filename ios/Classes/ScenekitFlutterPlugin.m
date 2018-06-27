@@ -48,12 +48,23 @@
         [self.renders removeObjectForKey:textureId];
         result(nil);
     }
-    else if ([@"zoom_to_pos" isEqualToString:call.method]) {
-        CGFloat x = [call.arguments[@"pos_x"] floatValue];
-        CGFloat y = [call.arguments[@"pos_y"] floatValue];
-        CGFloat z = [call.arguments[@"pos_z"] floatValue];
-        [_currentRender zoomTo:SCNVector3Make(x, y, z)];
-    } else {
+    else if ([@"zoom_to_item" isEqualToString:call.method])
+    {
+        NSInteger item = [call.arguments[@"item"] integerValue];
+        [_currentRender zoomToItem:item];
+    }
+    else if ([@"zoom_out" isEqualToString:call.method])
+    {
+        [_currentRender zoomOut];
+    }
+//    else if ([@"zoom_to_pos" isEqualToString:call.method]) {
+//        CGFloat x = [call.arguments[@"pos_x"] floatValue];
+//        CGFloat y = [call.arguments[@"pos_y"] floatValue];
+//        CGFloat z = [call.arguments[@"pos_z"] floatValue];
+//        [_currentRender zoomTo:SCNVector3Make(x, y, z)];
+//    }
+    else
+    {
         result(FlutterMethodNotImplemented);
     }
 }

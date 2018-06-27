@@ -7,6 +7,8 @@
                   onNewFrame:(void(^)(void))onNewFrame;
 
 - (void)dispose;
-- (void)zoomTo:(SCNVector3)pos;
+//- (void)zoomTo:(SCNVector3)pos;
+- (void)zoomToItem:(NSInteger)item;
+- (void)zoomOut;
 
 @end

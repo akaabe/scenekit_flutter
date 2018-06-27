@@ -16,6 +16,7 @@
 @property (nonatomic) CGSize renderSize;
 @property (nonatomic) SCNNode *freezer;
 @property (nonatomic) SCNNode *camera;
+@property (nonatomic) SCNScene *scene;
 @property (nonatomic) BOOL running;
 @property (strong, nonatomic) SCNRenderer *renderer;
 @end
@@ -77,7 +78,7 @@
 
 
 - (void)initGL {
-    SCNScene *scene = [SCNScene sceneNamed:@"model.scn"];
+    _scene = [SCNScene sceneNamed:@"model.scn"];
     
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:_context];
@@ -85,13 +86,11 @@
     [self createCVBufferWithSize:_renderSize withRenderTarget:&_target withTextureOut:&_texture];
     
     _renderer = [SCNRenderer rendererWithContext:_context options:nil];
-    _renderer.scene = scene;
+    _renderer.scene = _scene;
     
-    _camera = [scene.rootNode childNodeWithName:@"camera" recursively:YES];
+    _camera = [_scene.rootNode childNodeWithName:@"camera" recursively:YES];
     _renderer.pointOfView = _camera;
     _camera.eulerAngles = SCNVector3Make(0, 0, M_PI);
-    
-    _freezer = [scene.rootNode childNodeWithName:@"freezer" recursively:YES];
     
 //    [_renderer setJitteringEnabled:YES];
     
@@ -164,11 +163,38 @@
 
 - (void)zoomTo:(SCNVector3)pos;
 {
+//    _freezer = [scene.rootNode childNodeWithName:@"ID5729" recursively:YES];
     if (_camera != nil) {
+        SCNMaterial *material = _freezer.geometry.firstMaterial;
         [SCNTransaction begin];
-        [SCNTransaction setAnimationDuration:1.0];
+        [SCNTransaction setAnimationDuration:1.5];
         _camera.position = pos;
+        [SCNTransaction setCompletionBlock:^{
+            material.emission.contents = [UIColor blackColor];
+        }];
+        material.emission.contents = [UIColor redColor];
         [SCNTransaction commit];
+    }
+}
+
+- (void)zoomToItem:(NSInteger)item
+{
+    NSArray *items = @[@"ID5729", @"ID5721", @"ID5737", @"ID5745", @"ID5713"];
+    SCNVector3 pos[] = {SCNVector3Make(285, 57, 248), SCNVector3Make(245, 57, 248), SCNVector3Make(205, 57, 248), SCNVector3Make(165, 57, 248), SCNVector3Make(125, 57, 248)};
+    if (item >= 0 && item < [items count])
+    {
+        SCNNode *door = [_scene.rootNode childNodeWithName:items[item] recursively:YES];
+        if (_camera != nil) {
+            SCNMaterial *material = door.geometry.firstMaterial;
+            [SCNTransaction begin];
+            [SCNTransaction setAnimationDuration:1.5];
+            _camera.position = pos[item];
+            [SCNTransaction setCompletionBlock:^{
+                material.emission.contents = [UIColor blackColor];
+            }];
+            material.emission.contents = [UIColor redColor];
+            [SCNTransaction commit];
+        }
     }
 }
 

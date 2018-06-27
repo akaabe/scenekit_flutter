@@ -28,6 +28,10 @@ class ScenekitFlutter {
         'zoom_to_pos', {'pos_x': pos.x, 'pos_y': pos.y, 'pos_z': pos.z});
   }
 
+  Future<Null> zoomToItem(int item) async {
+    await _channel.invokeMethod('zoom_to_item', {'item': item});
+  }
+
   Future<Null> dispose() =>
       _channel.invokeMethod('dispose', {'textureId': textureId});
 
